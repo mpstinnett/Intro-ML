@@ -7,5 +7,5 @@ The first assignment of the class to get us used to the github workflow and give
 [Overview Document](Overview_of_ML.pdf)
 
 ## Portfolio Component 1: Data Exploration
-[Code](/Data_Exploration_Boston/Data_Exploration_Boston.cpp)
+[Code](/Data_Exploration_Boston/Data_Exploration_Boston.cpp)  
 [Documenation](/Data_Exploration_Boston/Data_Exploration_Boston.pdf)
