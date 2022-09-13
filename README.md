@@ -7,5 +7,6 @@ The first assignment of the class to get us used to the github workflow and give
 [Overview Document](Overview_of_ML.pdf)
 
 ## Portfolio Component 1: Data Exploration
+We manually wrote several basic statistical functions in c++ to compare to their built in r counterparts.  
 [Code](/Data_Exploration_Boston/Data_Exploration_Boston.cpp)  
-[Documenation](/Data_Exploration_Boston/Data_Exploration_Boston.pdf)
+[Overview Document](/Data_Exploration_Boston/Data_Exploration_Boston.pdf)
