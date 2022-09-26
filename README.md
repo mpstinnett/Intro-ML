@@ -14,5 +14,5 @@ We manually wrote several basic statistical functions in c++ to compare to their
 ## Portfolio Component 2: Linear Models
 Using r, we explored linear models. Namely Linear Regression and Classification. I worked with a partner to produce a 2 notebooks exploring these models on some sample data we found on the web.
 
-[Linear Regression](/Linear%20Models/Linear-Regression/Accelerometer_Linear_Regression.pdf)
+[Linear Regression](/Linear%20Models/Linear-Regression/Accelerometer_Linear_Regression.pdf)  
 [Classification](/Linear%20Models/Classification/Classification.pdf)
