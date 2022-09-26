@@ -1,0 +1,218 @@
+---
+title: "Classification"
+subtitle: "By Spencer Gray & Michael Stinnett"
+date: 2022-09-25
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+editor_options:
+  chunk_output_type: inline
+---
+Data Source: [Adults](https://archive.ics.uci.edu/ml/datasets/Adult)
+
+
+Linear models for classification work to try and prediction what "class" or "group" an observation falls into. This is a qualitative feature of the observation in question. Generally the linear models do this by making a classification decision based on a linear combination of the other given data in the observation. 
+
+For my example I am going to do a simple binary classification. I have found a nice set of census data with a target group being if the adult person makes more than 50k or less than or equal to 50k USD a year. In general, a classification model does not have to be binary and could have as many groups as it want. 
+
+In general, the main strength of classification is its own weakness. If there are discernible groups, then classification is great. If there is not, then the algorithms will plot an observation into a camp even it doesn't fit.
+
+I have combined both the test and training data given from UCI into one csv to get a better 80/20 split
+
+### Load the Data
+```{r}
+df <- read.csv("adult.csv")
+```
+
+I am only interested in a few metrics of the census data. Namely 
+age, education level with higher number being more educated, race, sex, hours worked per week, and the target income. I broke the data down this way to make it simpler for data cleaning and demonstration purposes. 
+
+### Clean the data
+```{r}
+df <- df[,c(1,5,9,10,13,15)]
+df$race <- factor(df$race)
+df$sex <- factor(df$sex)
+df$Income <- factor(df$Income)
+```
+
+Create the 80/20 split
+
+### Divide into train and test
+```{r}
+set.seed(1234)
+i <- sample(1:nrow(df), 0.80*nrow(df), replace=FALSE)
+train <- df[i,]
+test <- df[-i,]
+```
+
+### Data Exploration
+A few data basic r data exploration functions on the training data set
+```{r}
+names(train) 
+```
+```{r}
+dim(train) 
+```
+```{r}
+summary(train) 
+```
+```{r}
+str(train) 
+```
+```{r}
+head(train)
+```
+
+
+
+
+
+### Informative Graphs
+
+It seems 30 to 55ish seems to be the most wealthy.
+
+```{r}
+cdplot(train$age, train$Income, col=c("snow", "gray"),
+       main="Age Vs Income", xlab = "Age", ylab = "Income")
+```
+
+I found this comparison fascinating there is a point where over working on hours does actually always mean wealthier in general. Contrary to "grind" culture in 
+america.
+
+```{r}
+cdplot(train$hours.per.week, train$Income, col=c("snow", "gray"),
+       main="Hours Worked VS Income", xlab="Hours Per Week", ylab = "Income")
+```
+
+More men were surveyed in this data by far. Meaning there will be bias toward men, making demonstrating the wage gap a little harder.
+
+```{r}
+barplot(table(train$sex), xlab="Sex", ylab="Frequency",
+col=c("seagreen","wheat","sienna3"))
+```
+
+However, it is still apparent that more men end up wealthier than women. 
+
+```{r}
+library(vcd)
+mosaic(table(train[,c(6,4)]), shade=TRUE, legend=TRUE)
+```
+
+
+
+
+### Build a logistic regression model
+```{r}
+glm1 <- glm(Income~., data=train, family="binomial")
+summary(glm1)
+```
+According to our summary here. R thinks that several of the predictors were important. The low p values on age, education, race white, sex male, and hours.per.week signify that. The coefficients are all in log odds here. We have a lower Residual deviance than null deviance. Meaning that our model as a whole is better than just the intercept.
+The AIC would be used if we made several logisitic models to compare them to each other. The lower the AIC the better. 
+
+
+### Build a naive Bayes model
+
+```{r}
+library(e1071)
+nb1 <- naiveBayes(Income~., data=train)
+nb1
+```
+
+For Naive Bayes we see each predictors conditional probability of being a person
+making more than >50k or <=50k. For the factor predictors we get each level's
+conditional probability. For the integer predictors we get the mean and standard deviation for each class. I think it is important to note that male has a higher conditional probability to make more than 50k. White and Asian-Pac-Islander also have that quality. On average, the higher the education level the more likely you are to make more than 50k. On average, the age of 44 is when a person makes more than 50k a year.
+
+### Test on logistic regression
+
+```{r}
+logProbs <- predict(glm1, newdata=test, type="response")
+logPred <- ifelse(logProbs>0.5, 2, 1)
+```
+
+
+```{r}
+library(caret)
+confusionMatrix(as.factor(logPred), reference=as.factor(as.integer(test$Income)))
+```
+
+
+```{r}
+library(ROCR)
+logPr <- prediction(logProbs, test$Income)
+logPrf <- performance(logPr, measure = "tpr", x.measure = "fpr")
+plot(logPrf)
+```
+
+```{r}
+logAuc <- performance(logPr, measure = "auc")
+logAuc <- logAuc@y.values[[1]]
+logAuc
+```
+
+### Test on naive bayes
+```{r}
+bayesPred <- predict(nb1, newdata=test, type="class")
+```
+
+```{r}
+library(caret)
+confusionMatrix(as.factor(as.integer(bayesPred)), reference=as.factor(as.integer(test$Income)))
+```
+
+
+```{r}
+library(ROCR)
+bayesPr <- prediction(as.integer(bayesPred), as.integer(test$Income))
+bayesPrf <- performance(bayesPr, measure = "tpr", x.measure = "fpr")
+plot(bayesPrf)
+```
+
+```{r}
+bayesAuc <- performance(bayesPr, measure = "auc")
+bayesAuc <- bayesAuc@y.values[[1]]
+bayesAuc
+```
+
+### Comparing the metrics
+The most prevalent metric here is that accuracy is slightly higher on the Naive Bayes than the Logistic Regression. Naive Bayes has slightly lower sensitivity and and a marginally higher specificity. Meaning it predicted more true negatives and and a little less true positives.
+
+Interestingly, Naive Bayes has a very sharp trade off of false positives to true positives. Whereas, Logistic regression has a nice curve. This is shown of by the ROC.
+
+I think Naive Bayes preformed better in this case because the data set wasn't super huge. Also, naive Bayes works well when the data is biased, and as we demonstrated comparing male and female participants, this data set is biased.
+
+### Strengths and Weaknesses of Naive bayes and Linear Regression  
+  
+  
+Naive Bayes 
+
+Strengths:  
+-works well on small data  
+-easy to implement  
+-easy to interpret  
+-handles high dimensions well  
+
+Weaknesses:  
+-May be out preformed by other classifiers on larger data sets    
+-Guesses are made up for values not in the training set   
+-Nonindependent predictors inhibit the performance  
+
+Linear Regression  
+
+Strengths:  
+-Separates linearly separable classes  
+-Is computationally inexpensive  
+-Has good probabilities to work with    
+
+Weakness:  
+-Prone to underfitting. If there are more complicated decision boundaries, it   will likely not find it unless given really good training data. 
+
+
+### Benefits and draw backs of each metric used
+
+The confusion matrix is used to show off the amount of correct and incorrect predictions. From this matrix the accuracy, sensitivity, specificity are measured. These help quantify the extent to which each class was classified correctly. However, this does not account for a correct prediction by pure chance. 
+
+Cohen's kappa attempts to adjust for the correct prediction by pure chance. The main draw back here is the results of cohen's kappa are not always agreed upon.
+
+ROC and AUC visualize the performance of the algorithm. These show off the give and take of true positive rates to false positive rates. The ROC is the line that shows this and the area under that line is the AUC. These only show a limited give and take.
+
