@@ -15,4 +15,12 @@ We manually wrote several basic statistical functions in c++ to compare to their
 Using r, we explored linear models. Namely Linear Regression and Classification. I worked with a partner to produce a 2 notebooks exploring these models on some sample data we found on the web.
 
 [Linear Regression](/Linear%20Models/Linear-Regression/Accelerometer_Linear_Regression.pdf)  
-[Classification](/Linear%20Models/Classification/Classification.pdf)
+[Classification](/Linear%20Models/Classification/Classification.pdf)  
+
+## Portfolio Component 3: ML Algorithms from Scratch
+We were tasked to perform Logistic Regression and Naive bayes on a specific dataset about titantic passengers. The target was if they would survive or die based on predictors age, sex, and passenger class. We had to build up the models from scratch in c++. We could not use a library with the algorithms already available or use r.    
+
+[Logistic Regression Code](/ML_Algorithms_from_Scratch/Logistic_Regression.cpp)  
+[Naive Bayes Code](/ML_Algorithms_from_Scratch/Naive_Bayes.cpp)  
+[Titanic Data Set](/ML_Algorithms_from_Scratch/titanic_project.csv)  
+[Overview Document](/ML_Algorithms_from_Scratch/_ML%20from%20Scratch.pdf)  
