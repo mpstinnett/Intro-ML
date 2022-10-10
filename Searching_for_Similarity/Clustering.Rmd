@@ -1,0 +1,112 @@
+---
+title: "Clustering"
+subtitle: "Bishal Neupane, Saugat Gyawali, Spencer Gray, Michael Stinnett"
+output:
+  html_document:
+    df_print: paged
+---
+[Data Set Link](https://archive.ics.uci.edu/ml/datasets/Dry+Bean+Dataset)  
+
+I used data describing 7 types of dry beans. Originally this data was intended to be used for classification, but I omitted the target bean class to enable clustering. 
+
+## Set up Data
+```{r}
+rm(list=ls())
+```
+```{r}
+set.seed(1234)
+data <- read.csv("Dry_Bean_Dataset.csv")
+data <- na.omit(data)
+```
+```{r}
+data.scaled <- data[, -c(17)]
+data.scaled <- scale(data.scaled)
+```
+
+## Kmeans
+
+Graphing a few groups sum of squares with different cluster size to see if 7 clusters will really work out.  
+```{r}
+wss <- (nrow(data.scaled)-1)*sum(apply(data.scaled,2,var))
+for (i in 2:15) wss[i] <- sum(kmeans(data.scaled,
+   centers=i)$withinss)
+plot(1:15, wss, type="b", xlab="Number of Clusters",
+  ylab="Within groups sum of squares")
+```
+
+Performing kmeans operation and putting the cluster profiles back into the data
+
+```{r}
+fit <- kmeans(data.scaled, 7) 
+aggregate(data.scaled,by=list(fit$cluster),FUN=mean)
+data <- data.frame(data, fit$cluster)
+```
+
+
+```{r}
+options(max.print = 250)
+fit
+```
+
+
+This is a small example showing that it seems like the clustering generally placed the observations into the already their already defined classifications that was omitted from the clustering analysis
+
+```{r}
+head(data[, c(17,18)])
+tail(data[, c(17,18)])
+```
+
+
+A simple k means cluster plot  
+```{r}
+library("ggplot2")
+
+ggplot(data,aes(x=ShapeFactor1,y=ShapeFactor2,group=fit.cluster)) +
+  geom_point(aes(color=fit.cluster))
+
+```
+
+Some more complex cluster plots  
+```{r}
+library(cluster)
+clusplot(data.scaled, fit$cluster, color=TRUE,
+   labels=2, lines=0)
+library(fpc)
+plotcluster(data.scaled, fit$cluster)
+```
+
+
+
+## Hierarchical
+
+```{r}
+d <- dist(sample(data.scaled[, c(13,14,15,16)],30))
+fit.average <- hclust(d, method="average")
+plot(fit.average, hang=-1, cex=.8, 
+     main="Hierarchical Clustering")
+```
+
+## Model Based
+```{r}
+library(mclust)
+fit.m <- Mclust(data)
+summary(fit.m)
+```
+
+
+
+## Comparisons 
+
+These three clustering solutions set out to find different things about the data.
+
+Kmeans tries to group observations into meaningful groups. What exactly the
+groups mean is not always easy to find. In our case we knew to try 7 clusters
+because this data has observations for 7 different kinds of beans. Kmeans was 
+able catch on to this classification pretty closely, however, classification
+does not really matter to Kmeans. 
+
+Hierarchical clustering tries to find if there is some type of hierarchical taxonomy within the data. Interestingly it found that most beans belong to one of two main families. This is not something that was directly said within the data set, but both hierarchical and kmeans point towards this type of dichotomy.
+
+Finally model-based clustering just told us the general shape of our data. It is VEV (ellipsoidal, equal shape). I could not find much on what exactly that means. 
+
+Ultimately these models reaffirmed things we already knew about the data set and gave us some hints into something that can be investigated furthered, like the bean family hierarchy. 

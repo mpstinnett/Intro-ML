@@ -24,3 +24,11 @@ We were tasked to perform Logistic Regression and Naive bayes on a specific data
 [Naive Bayes Code](/ML_Algorithms_from_Scratch/Naive_Bayes.cpp)  
 [Titanic Data Set](/ML_Algorithms_from_Scratch/titanic_project.csv)  
 [Overview Document](/ML_Algorithms_from_Scratch/_ML%20from%20Scratch.pdf)  
+
+## Portfolio Component 4: Searching For Similarity
+In this section we discussed machine learning algorithms that find similar observations and try to make connections by grouping them in some way. We discussed Knn, Decision Trees, Clustering, and Dimensionality reductions.  
+
+[Knn & Decision Trees Regression](/Searching_for_Similarity/Similarity%20(2).pdf)  
+[Knn & Decision Trees Classification](/Searching_for_Similarity/Updated-Classification-using-Logistic-Regression-KNN-and-Decision-Tree.pdf)  
+[Clustering](/Searching_for_Similarity/Clustering.pdf)  
+[Diminsionality](/Searching_for_Similarity/Dimensionality.pdf)  
