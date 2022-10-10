@@ -31,4 +31,4 @@ In this section we discussed machine learning algorithms that find similar obser
 [Knn & Decision Trees Regression](/Searching_for_Similarity/Similarity%20(2).pdf)  
 [Knn & Decision Trees Classification](/Searching_for_Similarity/Updated-Classification-using-Logistic-Regression-KNN-and-Decision-Tree.pdf)  
 [Clustering](/Searching_for_Similarity/Clustering.pdf)  
-[Diminsionality](/Searching_for_Similarity/Dimensionality.pdf)  
+[Dimensionality](/Searching_for_Similarity/Dimensionality.pdf)  
