@@ -1,0 +1,179 @@
+---
+title: "SVM Regression"
+subtitle: "By Spencer Gray & Michael Stinnett"
+date: 2022-10-23
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+editor_options:
+  chunk_output_type: inline
+---
+Data Source: [Austin, TX House Listings](https://www.kaggle.com/datasets/ericpierce/austinhousingprices)
+
+## Load Packages
+
+```{r}
+library(e1071)
+```
+
+## Load Data
+
+```{r}
+df <- read.csv("austinHousingData.csv")
+```
+
+## Clean Data
+
+Ran linear regression once on the data prior to see what columns are important predictors. 
+
+```{r}
+df <- df[, c(4, 10, 12, 14, 16, 18, 19, 20, 23, 28, 31, 35, 39, 40, 42, 44, 45, 46)]
+df[sapply(df, is.character)] <- lapply(df[sapply(df, is.character)], 
+                                       as.factor)
+df$zipcode <- as.factor(df$zipcode)
+```
+
+## Divide into train/test/validate
+
+```{r}
+set.seed(1234)
+spec <- c(train=.6, test=.2, validate=.2)
+i <- sample(cut(1:nrow(df),
+                nrow(df)*cumsum(c(0,spec)), labels=names(spec)))
+train <- df[i=="train",]
+test <- df[i=="test",]
+vald <- df[i=="validate",]
+```
+
+## Data Exploration
+
+```{r}
+summary(train)
+```
+
+```{r}
+plot(train$avgSchoolSize, train$latestPrice, cex = 0.35, col="blue", xlab="School size", ylab="Price")
+plot(train$numOfBedrooms, train$latestPrice, cex = 0.35, col="blue", xlab="Num of bedrooms", ylab="Price")
+plot(train$yearBuilt, train$latestPrice, cex = 0.35, col="blue", xlab="Year Built", ylab="Price")
+boxplot(train$latestPrice~train$zipcode, varwidth=TRUE, notch=FALSE,
+main="Zipcode and price", xlab="Zipcode", ylab="Price")
+```
+
+### Try linear regression
+
+```{r}
+lm1 <- lm(latestPrice~., data=train)
+pred <- predict(lm1, newdata=test)
+cor_lm1 <- cor(pred, test$latestPrice)
+mse_lm1 <- mean((pred-test$latestPrice)^2)
+summary(lm1)
+```
+
+### Try a linear kernel
+
+```{r}
+svm1 <- svm(latestPrice~., data=train, kernel="linear", cost=5, scale=TRUE)
+summary(svm1)
+pred <- predict(svm1, newdata=test)
+cor_svm1 <- cor(pred, test$latestPrice)
+mse_svm1 <- mean((pred - test$latestPrice)^2)
+```
+
+### Tune linear kernel
+
+```{r}
+tune_svm1 <- tune(svm, latestPrice~., data=vald, kernel="linear",
+                  ranges=list(cost=c(0.001, 0.01, 0.1, 1, 5, 10)))
+summary(tune_svm1)
+summary(tune_svm1$best.model)
+pred <- predict(tune_svm1$best.model, newdata=test)
+tuned_cor_svm1 <- cor(pred, test$latestPrice)
+tuned_mse_svm1 <- mean((pred - test$latestPrice)^2)
+
+```
+
+### Try a polynomial kernel
+
+```{r}
+svm2 <- svm(latestPrice~., data=train, kernel="polynomial", cost=5, scale=TRUE)
+summary(svm2)
+pred <- predict(svm2, newdata=test)
+cor_svm2 <- cor(pred, test$latestPrice)
+mse_svm2 <- mean((pred - test$latestPrice)^2)
+```
+
+### Tune polynomial kernel
+
+```{r}
+tune_svm2 <- tune(svm, latestPrice~., data=vald, kernel="polynomial",
+                  ranges=list(cost=c(0.001, 0.01, 0.1, 1, 5, 10)))
+summary(tune_svm2)
+summary(tune_svm2$best.model)
+pred <- predict(tune_svm2$best.model, newdata=test)
+tuned_cor_svm2 <- cor(pred, test$latestPrice)
+tuned_mse_svm2 <- mean((pred - test$latestPrice)^2)
+
+```
+
+### Try a radial kernel
+
+```{r}
+svm3 <- svm(latestPrice~., data=train, kernel="radial", cost=5, gamma=1, scale=TRUE)
+summary(svm3)
+pred <- predict(svm3, newdata=test)
+cor_svm3 <- cor(pred, test$latestPrice)
+mse_svm3 <- mean((pred - test$latestPrice)^2)
+```
+
+### Tune radial Kernel
+
+```{r}
+set.seed(1234)
+tune_svm3 <- tune(svm, latestPrice~., data=vald, kernel="radial",
+                 ranges=list(cost=c(0.1,1,10),
+                             gamma=c(0.5,1,2,3,4)))
+summary(tune_svm3)
+summary(tune_svm3$best.model)
+pred <- predict(tune_svm3$best.model, newdata=test)
+tuned_cor_svm3 <- cor(pred, test$latestPrice)
+tuned_mse_svm3 <- mean((pred - test$latestPrice)^2)
+```
+
+
+### Results
+
+Linear Regression  
+Correlation: 0.7613644  
+MSE: 70568735724  
+  
+Linear Kernel  
+Correlation: 0.7835833  
+MSE: 69222878510  
+  
+Tuned Linear Kernel  
+Correlation: 0.7767439  
+MSE: 71307832537  
+  
+Polynomial Kernel  
+Correlation: 0.782148  
+MSE: 66577688810  
+  
+Tuned Polynomial Kernel  
+Correlation: 0.5486643  
+MSE: 1.40312e+11  
+  
+Radial Kernel  
+Correlation: 0.5212503  
+MSE: 125615340679  
+  
+Tuned Radial Kernel  
+Correlation: 0.5769459  
+MSE: 115627177155  
+  
+The results seem to show that a linear kernel best models our data.The hyperplanes of our data are shaped linearly. Meaning there is likely a linear relationship between our predictors and the value to be predicted. Based on our data exploration, that seemed to be the case. 
+  
+Due to the large size of the data, testing a large amount of hyperparameters seemed to overwork my computer. Thus, I was limited in the amount of tuning I could. For both linear and polynomial, the tuned model was worse than my guessed model. However, both linear and polynomial gave slightly better results than linear regression non tuned.
+
+
+

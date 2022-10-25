@@ -32,3 +32,10 @@ In this section we discussed machine learning algorithms that find similar obser
 [Knn & Decision Trees Classification](/Searching_for_Similarity/Updated-Classification-using-Logistic-Regression-KNN-and-Decision-Tree.pdf)  
 [Clustering](/Searching_for_Similarity/Clustering.pdf)  
 [Dimensionality](/Searching_for_Similarity/Dimensionality.pdf)  
+
+## Portfolio Component 5: Kernel and Ensemble Methods  
+We explored Support Vector Machines for both Regression and Classfication using several kernels. Then we explored the utiltiy of ensemble methods using Random Forests, Bagging, and Boosting. Specifically highlighting the power of the algorithm XGBoost.  
+
+[SVM Regression](/Kernel_and_Ensemble_Methods/SVM%20Regression.pdf)  
+[SVM Classification](/Kernel_and_Ensemble_Methods/SVM_Classification.pdf)  
+[Ensemble](/Kernel_and_Ensemble_Methods/Ensemble.pdf)  
