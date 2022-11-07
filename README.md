@@ -39,3 +39,9 @@ We explored Support Vector Machines for both Regression and Classfication using 
 [SVM Regression](/Kernel_and_Ensemble_Methods/SVM%20Regression.pdf)  
 [SVM Classification](/Kernel_and_Ensemble_Methods/SVM_Classification.pdf)  
 [Ensemble](/Kernel_and_Ensemble_Methods/Ensemble.pdf)  
+  
+## Portfolio Component 6: Machine Learning with Sklearn
+We explored Machine Learning with R and with C++. Now we explore Machine Learning using Python's Sklearn library. This gives us a diverse set of technologies we have become familar with. We performed Logistic Regression, Deciscion Tree, and Neural Networks for classification on a set of automobile data.  
+  
+[Sklearn pdf](/ML_With_sklearn/ML_with_sklearn.pdf)  
+[Sklearn python notebook](/ML_With_sklearn/ML_with_sklearn.ipynb)  
