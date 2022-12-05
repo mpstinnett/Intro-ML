@@ -45,3 +45,9 @@ We explored Machine Learning with R and with C++. Now we explore Machine Learnin
   
 [Sklearn pdf](/ML_With_sklearn/ML_with_sklearn.pdf)  
 [Sklearn python notebook](/ML_With_sklearn/ML_with_sklearn.ipynb)  
+
+## Portfolio Component 7: Image Classification
+Finally, this component marks the end of my machine learning class. I became familiar with Image classification using deep learning models. I became familiar with the RNN, CNN, and Sequential architectures. I also became familiar with transfer learning using pretrained models on Tensorflow.   
+  
+[Image Classification pdf](/Image_Classification/cats-vs-dogs.pdf)  
+[Image Classification Notebook](/Image_Classification/cats-vs-dogs.ipynb)  
